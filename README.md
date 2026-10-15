@@ -1,5 +1,8 @@
 # Stirp&Radis
 
+*Origini connesse.*  
+*Dai radis ai rami di domani.*
+
 Albero genealogico personale in **un solo file HTML**: niente server, niente account, i dati restano nel tuo browser.
 
 ## Come si usa
