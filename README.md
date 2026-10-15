@@ -9,7 +9,11 @@ Albero genealogico personale in **un solo file HTML**: niente server, niente acc
 - **Da file locale:** scarica `index.html` e aprilo con doppio clic (Linux, Windows, macOS, telefono). Funziona tutto offline.
 - **Online come app (PWA):** apri la pagina pubblicata (es. GitHub Pages) e scegli “Installa app” / “Aggiungi a schermata Home”. Il service worker (`sw.js`) la rende disponibile anche senza rete. Su `file://` la parte PWA si disattiva da sola.
 
+## Navigazione
+Albero · Persone · ＋ Nuova · Esplora · Impostazioni: stesse voci su telefono (barra in basso) e computer (barra laterale).
+
 ## Funzioni principali
+- **Storia del cognome** (Esplora): chi lo porta, antenato più antico, trasmissione per generazioni, nascite per decennio e luogo, evidenziazione nell’albero.
 - Albero e vista a ruota, elenco persone, unioni (matrimoni, convivenze, divorzi), adozioni, fratellastri.
 - Date esatte o approssimative (“circa 1890”, “tra 1921 e 1923”), sepoltura, data e luogo delle unioni.
 - **Importa GEDCOM** (MyHeritage, Ancestry, FamilySearch…) con unione intelligente (ID `_UID`, nome e data di nascita) ed **esporta GEDCOM 5.5.1 UTF-8** per MyHeritage.
@@ -18,7 +22,7 @@ Albero genealogico personale in **un solo file HTML**: niente server, niente acc
 - Backup facoltativo **cifrato** su un tuo Google Sheet (AES‑GCM 256, password mai inviata). Il codice Apps Script è in `Code.gs` e dentro l’app (Impostazioni › Google).
 
 ## Colori
-Verde bosco come colore principale, sabbia come secondario. Nell’albero e nella ruota i rami hanno gli stessi colori: azzurro e verde per il lato paterno, sabbia e rosa per quello materno, rispetto alla “Persona al centro”.
+Un solo verde (#338259) e una sola sabbia (#a87b3e) in entrambi i temi. Nell’albero e nella ruota i rami hanno gli stessi colori: azzurro e verde per il lato paterno, sabbia e rosa per quello materno, rispetto alla “Persona al centro”.
 
 ## Dove sono i dati
 Nel `localStorage` del browser che usi (chiave `gt-v22`, compatibile con le versioni precedenti). Ogni browser/dispositivo ha i suoi dati: usa il backup JSON o Google per spostarli.
@@ -30,7 +34,7 @@ Nel `localStorage` del browser che usi (chiave `gt-v22`, compatibile con le vers
 | `sw.js` | Facoltativo: funzionamento offline quando pubblicata su https |
 | `Code.gs` | Facoltativo: codice per il backup su Google Sheet |
 | `sample-myheritage.ged` | Albero di prova **fittizio** in formato GEDCOM |
-| `icons/logo.svg` | Logo: “&” tinta unita verde bosco (germogli compresi), radici staccate color sabbia |
+| `icons/logo.svg` | Logo: “&” verde #338259 (germogli compresi), radici staccate sabbia #a87b3e, stessi colori in tema chiaro e scuro |
 | `icons/logo-small.svg` | Stessa forma, riquadro quadrato per favicon (le icone PWA sono già incluse in `index.html`) |
 | `icons/logo-mono.svg` | Versione monocromatica nera |
 
