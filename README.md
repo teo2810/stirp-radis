@@ -30,8 +30,9 @@ Nel `localStorage` del browser che usi (chiave `gt-v22`, compatibile con le vers
 | `sw.js` | Facoltativo: funzionamento offline quando pubblicata su https |
 | `Code.gs` | Facoltativo: codice per il backup su Google Sheet |
 | `sample-myheritage.ged` | Albero di prova **fittizio** in formato GEDCOM |
-| `icons/logo.svg` | Logo: “&” verde bosco con radice color sabbia, germoglio e radici |
-| `icons/logo-small.svg` | Versione semplificata per favicon e icone piccole (le icone PWA sono già incluse in `index.html`) |
+| `icons/logo.svg` | Logo: “&” tinta unita verde bosco (germogli compresi), radici staccate color sabbia |
+| `icons/logo-small.svg` | Stessa forma, riquadro quadrato per favicon (le icone PWA sono già incluse in `index.html`) |
+| `icons/logo-mono.svg` | Versione monocromatica nera |
 
 ## Pubblicare con GitHub Pages
 Settings › Pages › Source: *Deploy from a branch* › `main` / `(root)`. Dopo un minuto l’app è su `https://<utente>.github.io/stirp-radis/`.
