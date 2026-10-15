@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-75 0 600 630">
+<defs>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#6e7f62"/><stop offset=".35" stop-color="#2c3b30"/><stop offset="1" stop-color="#1f2c24"/></linearGradient>
+<linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e2a22"/><stop offset=".6" stop-color="#26352b"/><stop offset="1" stop-color="#3f5442"/></linearGradient>
+<linearGradient id="s1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b8956a"/><stop offset=".45" stop-color="#e2cba8"/><stop offset="1" stop-color="#9c7a52"/></linearGradient>
+<linearGradient id="s2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a88560"/><stop offset="1" stop-color="#7a5a3a"/></linearGradient>
+<linearGradient id="l1" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#4e6146"/><stop offset="1" stop-color="#8b9a74"/></linearGradient>
+<linearGradient id="l3" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#2d3f31"/><stop offset="1" stop-color="#53684e"/></linearGradient>
+</defs>
+<g fill="none" stroke="url(#s2)" stroke-linecap="round">
+<path stroke-width="16" d="M294 436C270 470 220 480 160 500M294 436C280 490 256 530 236 590M296 436C310 490 330 530 350 584M296 436C330 462 370 480 410 520"/>
+</g>
+<path fill="url(#g2)" d="M140 228C60 250 10 300 18 352C26 420 92 456 170 452C220 450 256 440 282 424C248 432 212 436 176 432C110 428 62 392 66 346C70 300 106 266 162 252Z"/>
+<path fill="url(#g1)" d="M268 72C258 38 222 16 178 18C108 20 60 62 68 112C74 170 120 225 175 285L300 420C330 448 380 466 432 466C392 452 360 428 330 392L235 278C200 240 150 190 125 130C110 92 130 50 178 48C220 46 252 56 268 72Z"/>
+<path fill="url(#s1)" d="M130 231C196 236 256 262 290 306C312 338 316 390 306 442L282 444C290 400 282 358 262 330C232 288 186 254 130 231Z"/>
+<path fill="url(#s1)" d="M198 234C236 212 260 182 262 142C263 120 266 106 272 94L282 97C276 112 274 128 274 145C273 192 244 226 210 244Z"/>
+<path fill="url(#l1)" d="M272 118C258 66 290 28 346 14C354 68 324 106 272 118Z"/>
+<path fill="#a8b291" d="M265 150C238 148 212 126 205 92C238 92 262 116 265 150Z"/>
+<path fill="url(#l3)" d="M328 350C334 300 374 266 428 260C416 310 380 346 328 350Z"/>
+</svg>

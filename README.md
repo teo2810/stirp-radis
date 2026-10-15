@@ -17,6 +17,9 @@ Albero genealogico personale in **un solo file HTML**: niente server, niente acc
 - Backup JSON, ripristino, “Elimina tutte le persone” con tre conferme e copia automatica.
 - Backup facoltativo **cifrato** su un tuo Google Sheet (AES‑GCM 256, password mai inviata). Il codice Apps Script è in `Code.gs` e dentro l’app (Impostazioni › Google).
 
+## Colori
+Verde bosco come colore principale, sabbia come secondario. Nell’albero e nella ruota i rami hanno gli stessi colori: azzurro e verde per il lato paterno, sabbia e rosa per quello materno, rispetto alla “Persona al centro”.
+
 ## Dove sono i dati
 Nel `localStorage` del browser che usi (chiave `gt-v22`, compatibile con le versioni precedenti). Ogni browser/dispositivo ha i suoi dati: usa il backup JSON o Google per spostarli.
 
@@ -27,7 +30,8 @@ Nel `localStorage` del browser che usi (chiave `gt-v22`, compatibile con le vers
 | `sw.js` | Facoltativo: funzionamento offline quando pubblicata su https |
 | `Code.gs` | Facoltativo: codice per il backup su Google Sheet |
 | `sample-myheritage.ged` | Albero di prova **fittizio** in formato GEDCOM |
-| `icons/logo.svg` | Logo vettoriale (le icone PWA sono già incluse in `index.html`) |
+| `icons/logo.svg` | Logo: “&” verde bosco con radice color sabbia, germoglio e radici |
+| `icons/logo-small.svg` | Versione semplificata per favicon e icone piccole (le icone PWA sono già incluse in `index.html`) |
 
 ## Pubblicare con GitHub Pages
 Settings › Pages › Source: *Deploy from a branch* › `main` / `(root)`. Dopo un minuto l’app è su `https://<utente>.github.io/stirp-radis/`.
