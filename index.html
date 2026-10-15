@@ -402,6 +402,14 @@ body #googleCard.sx-panel{padding:18px!important;border-radius:14px}
 body .sx-row[hidden],body .sx-page[hidden],#sxHome[hidden]{display:none!important}
 .dup-group>header{position:static!important;inset:auto!important;padding:0 0 8px!important;min-height:0!important;height:auto!important;background:none!important;border:0!important;border-bottom:1px solid var(--border)!important;box-shadow:none!important;backdrop-filter:none!important;width:auto!important}
 .brand{display:flex;align-items:center;gap:8px}.brand-logo{width:28px;height:28px;flex:none}.nav-logo{width:34px;height:34px}
+.brand-txt{display:flex;flex-direction:column;line-height:1.05}.brand-slogan{font-size:10.5px;font-weight:400!important;letter-spacing:.02em;color:var(--muted);-webkit-text-fill-color:var(--muted);background:none;opacity:.85;white-space:nowrap}
+@media(max-width:380px){.brand-slogan{font-size:9.5px}}
+#splash{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--bg);color:var(--text);pointer-events:none;animation:splashOut .35s ease .75s forwards}
+#splash .splash-logo{width:96px;height:96px}.splash-name{font-size:26px;font-weight:700;letter-spacing:-.02em}.splash-slogan{font-size:15px;color:var(--text);opacity:.9}.splash-sub{font-size:12.5px;color:var(--muted);font-style:italic;margin-top:-4px}
+#splash.gone{animation:splashOut .25s ease forwards}
+@keyframes splashOut{to{opacity:0;visibility:hidden}}
+@media(prefers-reduced-motion:reduce){#splash,#splash.gone{animation:splashOut 0s linear .6s forwards!important;transition:none!important}}
+@media print{#splash{display:none}}
 </style>
 
 <style id="coherent-ui">
@@ -567,9 +575,9 @@ body .profile-notes-box{border-top:1px solid var(--border);padding-top:12px}
 }
 </style>
 </head>
-<body>
+<body><div id="splash" aria-hidden="true"><svg class="splash-logo" viewBox="0 -1 64 66" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M46 50 L23 24 C17 17 19 8 27 8 C35 8 37 17 30 23 L20 30 C11 36 12 50 25 51 C33 52 39 46 43 39 L48 31" stroke="var(--text)" stroke-width="5"/><path d="M46 50 C49 54 53 55 56 54 M46 50 C46 55 44 58 41 60 M25 51 C23 55 19 57 16 57 M25 51 C27 55 27 58 29 61" stroke="#a78bfa" stroke-width="2.6"/><circle cx="48.5" cy="30" r="5.2" fill="var(--bg)" stroke="var(--m)" stroke-width="3"/><circle cx="27" cy="8" r="5.2" fill="var(--bg)" stroke="var(--f)" stroke-width="3"/><circle cx="48.5" cy="30" r="1.8" fill="var(--m)"/><circle cx="27" cy="8" r="1.8" fill="var(--f)"/></svg><div class="splash-name">Stirp&amp;Radis</div><div class="splash-slogan">Origini connesse.</div><div class="splash-sub">Dai radis ai rami di domani.</div></div>
 <header>
-  <div class="brand"><svg class="brand-logo" viewBox="0 -1 64 66" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M46 50 L23 24 C17 17 19 8 27 8 C35 8 37 17 30 23 L20 30 C11 36 12 50 25 51 C33 52 39 46 43 39 L48 31" stroke="var(--text)" stroke-width="5"/><path d="M46 50 C49 54 53 55 56 54 M46 50 C46 55 44 58 41 60 M25 51 C23 55 19 57 16 57 M25 51 C27 55 27 58 29 61" stroke="#a78bfa" stroke-width="2.6"/><circle cx="48.5" cy="30" r="5.2" fill="var(--bg)" stroke="var(--m)" stroke-width="3"/><circle cx="27" cy="8" r="5.2" fill="var(--bg)" stroke="var(--f)" stroke-width="3"/><circle cx="48.5" cy="30" r="1.8" fill="var(--m)"/><circle cx="27" cy="8" r="1.8" fill="var(--f)"/></svg><span>Stirp&amp;Radis</span></div>
+  <div class="brand"><svg class="brand-logo" viewBox="0 -1 64 66" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M46 50 L23 24 C17 17 19 8 27 8 C35 8 37 17 30 23 L20 30 C11 36 12 50 25 51 C33 52 39 46 43 39 L48 31" stroke="var(--text)" stroke-width="5"/><path d="M46 50 C49 54 53 55 56 54 M46 50 C46 55 44 58 41 60 M25 51 C23 55 19 57 16 57 M25 51 C27 55 27 58 29 61" stroke="#a78bfa" stroke-width="2.6"/><circle cx="48.5" cy="30" r="5.2" fill="var(--bg)" stroke="var(--m)" stroke-width="3"/><circle cx="27" cy="8" r="5.2" fill="var(--bg)" stroke="var(--f)" stroke-width="3"/><circle cx="48.5" cy="30" r="1.8" fill="var(--m)"/><circle cx="27" cy="8" r="1.8" fill="var(--f)"/></svg><span class="brand-txt"><span>Stirp&amp;Radis</span><small class="brand-slogan">Origini connesse.</small></span></div>
   <div class="stats">
     <span>Tot <b id="sTot">0</b></span>
     <span>Vivi <b id="sVivi">0</b></span>
@@ -1851,7 +1859,7 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvent=e;if(
 async function installApp(){if(!installEvent){notify('Installazione non disponibile: usa il menu del browser › “Installa app” o “Aggiungi a schermata Home”.');return}installEvent.prompt();try{await installEvent.userChoice}catch(e){}installEvent=null;sxRefresh()}
 function setupPWA(){
  if(!/^https?:$/.test(location.protocol))return;
- try{const base=location.href.split('#')[0].split('?')[0],m={name:'Stirp&Radis',short_name:'Stirp&Radis',description:'Albero genealogico personale',lang:'it',start_url:base,scope:new URL('./',base).href,id:new URL('./',base).pathname,display:'standalone',orientation:'any',background_color:'#0f172a',theme_color:'#0f172a',icons:[{src:PWA_ICON_192,sizes:'192x192',type:'image/png',purpose:'any'},{src:PWA_ICON_512,sizes:'512x512',type:'image/png',purpose:'any'},{src:PWA_ICON_512,sizes:'512x512',type:'image/png',purpose:'maskable'}]};
+ try{const base=location.href.split('#')[0].split('?')[0],m={name:'Stirp&Radis',short_name:'Stirp&Radis',description:'Origini connesse. Albero genealogico personale',lang:'it',start_url:base,scope:new URL('./',base).href,id:new URL('./',base).pathname,display:'standalone',orientation:'any',background_color:'#0f172a',theme_color:'#0f172a',icons:[{src:PWA_ICON_192,sizes:'192x192',type:'image/png',purpose:'any'},{src:PWA_ICON_512,sizes:'512x512',type:'image/png',purpose:'any'},{src:PWA_ICON_512,sizes:'512x512',type:'image/png',purpose:'maskable'}]};
   const link=document.createElement('link');link.rel='manifest';link.href='data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(m));document.head.appendChild(link)}catch(e){}
  if('serviceWorker' in navigator&&window.isSecureContext)fetch('sw.js',{method:'HEAD',cache:'no-store'}).then(r=>{if(r.ok&&/javascript/i.test(r.headers.get('content-type')||''))return navigator.serviceWorker.register('sw.js')}).catch(()=>{});
 }
@@ -1970,6 +1978,7 @@ async function unlockCloudToken(password){try{const d=await decryptBackup(cloud.
 Object.assign(window,{importGEDCOM,exportGEDCOM,sxHome,sxOpen,sxTheme,installApp,deleteAllPeople,restoreDeleted,scanDuplicates,resetIgnoredDuplicates});
 window.__gt={gedcomToPeople,gedcomExport,gedMerge,gedDate,itToGedDate,normalize:l=>normalize(l),findDuplicates,mergePeople,get people(){return people},snapshot:()=>snapshot()};
 setupPWA();
+addEventListener('load',()=>{const sp=document.getElementById('splash');if(sp)setTimeout(()=>{sp.classList.add('gone');setTimeout(()=>sp.remove(),400)},600)});
 // ===== fine v29 =====
 
 
