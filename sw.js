@@ -1,7 +1,7 @@
 // Stirp&Radis service worker: rende l'app disponibile offline quando è pubblicata su https.
 // I dati restano nel browser (localStorage): il service worker salva solo i file dell'app.
-const CACHE='stirpradis-v36-1';
-const ASSETS=['./','./index.html'];
+const CACHE='stirpradis-v37-1';
+const ASSETS=['./','./index.html','./manifest.webmanifest','./icons/icon.svg','./icons/icon-maskable.svg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).catch(()=>{}).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('stirpradis-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{
