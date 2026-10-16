@@ -47,6 +47,6 @@ Settings › Pages › Source: *Deploy from a branch* › `main` / `(root)`. Dop
 Tutto è in `index.html`, un solo file che deve funzionare anche da `file://`. Dentro, nell'ordine:
 - **`<style>`** — token del design system (`:root`: spaziature `--sp-*`, raggi `--r-*`, testo `--fs-*`, colori, ombre, durate) → base → componenti → viste (albero, Persone, Impostazioni) → struttura (barra laterale, barra mobile, colonna destra) → scheda persona.
 - **`<script>`** — un'unica funzione `'use strict'`, divisa in sezioni con intestazioni `// ===== … =====`: stato e salvataggio (`localStorage` `gt-v22`, sempre compatibile con i backup precedenti) · modello (persone, unioni, duplicati) · impaginazione dell'albero · disegno (`render`, `drawEdges` + `routeEdgeLanes`) · componenti (dialoghi dell'app, tooltip, scheda) · import/export GEDCOM e JSON · Google (backup cifrato) · PWA.
-- Verso l'esterno sono esposte solo le funzioni usate dall'HTML (`onclick`) e `window.__gt` per i test.
+- Verso l'esterno c'è un solo oggetto globale, `window.SR`: contiene le funzioni chiamate dall'HTML (`onclick="SR.go('tree')"`) e `SR.__gt` per i test. Ogni funzione ha una sola implementazione (niente funzioni riavvolte da fuori).
 
 Regole: niente `alert/confirm/prompt` nativi (usa `appConfirm`), solo valori dei token nel CSS e nei colori JS (`tok('--nome')`), commenti in italiano, nessun dato reale nel repository (solo esempi fittizi).
