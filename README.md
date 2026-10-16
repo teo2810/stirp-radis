@@ -7,13 +7,14 @@ Albero genealogico personale in **un solo file HTML**: niente server, niente acc
 
 ## Come si usa
 - **Da file locale:** scarica `index.html` e aprilo con doppio clic (Linux, Windows, macOS, telefono). Funziona tutto offline.
-- **Online come app (PWA):** apri la pagina pubblicata (es. GitHub Pages) e scegli “Installa app” / “Aggiungi a schermata Home”. Il service worker (`sw.js`) la rende disponibile anche senza rete. Su `file://` la parte PWA si disattiva da sola.
+- **Come app installata (PWA):** apri **https://teo2810.github.io/stirp-radis/** e usa Impostazioni › *Installa come app* (Chrome/Edge/Android), oppure il menu del browser › “Installa app”. Su iPhone/iPad: Safari › Condividi › *Aggiungi alla schermata Home*.
+- **Perché da file non si installa:** una pagina aperta da disco (`file://`) non può mai diventare un'app installata: è una regola dei browser (serve https + manifest + service worker). Il file locale funziona comunque offline. I dati del file locale e dell'app installata sono separati: spostali con *Scarica backup JSON* / *Carica backup JSON*.
 
 ## Navigazione
-Albero · Persone · ＋ Nuova · Esplora · Impostazioni: stesse voci su telefono (barra in basso) e computer (barra laterale).
+Albero · Persone (Elenco · Duplicati · Cognomi · Unioni) · ＋ Nuova · Impostazioni: barra in basso su telefono, barra laterale comprimibile su computer. Tema Sole / Luna / Sistema dalla barra laterale (su telefono: pulsante sul grafico).
 
 ## Funzioni principali
-- **Storia del cognome** (Esplora): chi lo porta, antenato più antico, trasmissione per generazioni, nascite per decennio e luogo, evidenziazione nell’albero.
+- **Storia del cognome** (Persone › Cognomi): chi lo porta, antenato più antico, trasmissione per generazioni, nascite per decennio e luogo, evidenziazione nell’albero.
 - Albero e vista a ruota, elenco persone, unioni (matrimoni, convivenze, divorzi), adozioni, fratellastri.
 - Date esatte o approssimative (“circa 1890”, “tra 1921 e 1923”), sepoltura, data e luogo delle unioni.
 - **Importa GEDCOM** (MyHeritage, Ancestry, FamilySearch…) con unione intelligente (ID `_UID`, nome e data di nascita) ed **esporta GEDCOM 5.5.1 UTF-8** per MyHeritage.
@@ -31,12 +32,21 @@ Nel `localStorage` del browser che usi (chiave `gt-v22`, compatibile con le vers
 | File | A cosa serve |
 |---|---|
 | `index.html` | L’app completa (unico file indispensabile) |
-| `sw.js` | Facoltativo: funzionamento offline quando pubblicata su https |
+| `sw.js` | Service worker: offline e installazione quando pubblicata su https |
+| `manifest.webmanifest` | Manifest dell'app installabile (nome, colori, icone) |
+| `icons/icon.svg`, `icons/icon-maskable.svg` | Icone dell'app installata (anche in PNG dentro il manifest) |
 | `Code.gs` | Facoltativo: codice per il backup su Google Sheet |
-| `sample-myheritage.ged` | Albero di prova **fittizio** in formato GEDCOM |
 | `icons/logo.svg` | Logo: “&” verde #338259 (germogli compresi), radici staccate sabbia #a87b3e, stessi colori in tema chiaro e scuro |
-| `icons/logo-small.svg` | Stessa forma, riquadro quadrato per favicon (le icone PWA sono già incluse in `index.html`) |
+| `icons/logo-small.svg` | Stessa forma, riquadro quadrato per favicon  |
 | `icons/logo-mono.svg` | Versione monocromatica nera |
 
 ## Pubblicare con GitHub Pages
 Settings › Pages › Source: *Deploy from a branch* › `main` / `(root)`. Dopo un minuto l’app è su `https://<utente>.github.io/stirp-radis/`.
+
+## Struttura del codice (per chi contribuisce)
+Tutto è in `index.html`, un solo file che deve funzionare anche da `file://`. Dentro, nell'ordine:
+- **`<style>`** — token del design system (`:root`: spaziature `--sp-*`, raggi `--r-*`, testo `--fs-*`, colori, ombre, durate) → base → componenti → viste (albero, Persone, Impostazioni) → struttura (barra laterale, barra mobile, colonna destra) → scheda persona.
+- **`<script>`** — un'unica funzione `'use strict'`, divisa in sezioni con intestazioni `// ===== … =====`: stato e salvataggio (`localStorage` `gt-v22`, sempre compatibile con i backup precedenti) · modello (persone, unioni, duplicati) · impaginazione dell'albero · disegno (`render`, `drawEdges` + `routeEdgeLanes`) · componenti (dialoghi dell'app, tooltip, scheda) · import/export GEDCOM e JSON · Google (backup cifrato) · PWA.
+- Verso l'esterno sono esposte solo le funzioni usate dall'HTML (`onclick`) e `window.__gt` per i test.
+
+Regole: niente `alert/confirm/prompt` nativi (usa `appConfirm`), solo valori dei token nel CSS e nei colori JS (`tok('--nome')`), commenti in italiano, nessun dato reale nel repository (solo esempi fittizi).
