@@ -20,6 +20,8 @@ Albero · Persone (Elenco · Duplicati · Cognomi · Unioni) · ＋ Nuova · Imp
 - **Importa GEDCOM** (MyHeritage, Ancestry, FamilySearch…) con unione intelligente (ID `_UID`, nome e data di nascita) ed **esporta GEDCOM 5.5.1 UTF-8** per MyHeritage.
 - **Trova duplicati** (nomi senza accenti, piccoli refusi, date, genitori) e unione guidata delle schede.
 - Backup JSON, ripristino, “Elimina tutte le persone” con tre conferme e copia automatica.
+- **Alberi grandi**: pulsante *Vista* sull’albero — *Attorno a una persona* (antenati/discendenti regolabili, “+” per espandere), ramo *Paterno/Materno*, filtro per *Cognome*; la freccia sotto una scheda comprime il ramo in una sola scheda “Cognome · N persone”. Le scelte restano salvate.
+- **Famiglia condivisa**: un archivio cifrato comune sul Google Drive di chi lo crea, compilato insieme ai parenti (vedi sotto).
 - Backup facoltativo **cifrato** su un tuo Google Sheet (AES‑GCM 256, password mai inviata). Il codice Apps Script è in `Code.gs` e dentro l’app (Impostazioni › Google).
 
 ## Colori
@@ -35,10 +37,26 @@ Nel `localStorage` del browser che usi (chiave `gt-v22`, compatibile con le vers
 | `sw.js` | Service worker: offline e installazione quando pubblicata su https |
 | `manifest.webmanifest` | Manifest dell'app installabile (nome, colori, icone) |
 | `icons/icon.svg`, `icons/icon-maskable.svg` | Icone dell'app installata (anche in PNG dentro il manifest) |
-| `Code.gs` | Facoltativo: codice per il backup su Google Sheet |
+| `Code.gs` | Facoltativo: codice Apps Script per backup e archivio di famiglia |
 | `icons/logo.svg` | Logo: “&” verde #338259 (germogli compresi), radici staccate sabbia #a87b3e, stessi colori in tema chiaro e scuro |
 | `icons/logo-small.svg` | Stessa forma, riquadro quadrato per favicon  |
 | `icons/logo-mono.svg` | Versione monocromatica nera |
+
+## Famiglia condivisa (archivio comune)
+Un solo archivio **cifrato end‑to‑end** (PBKDF2 + AES‑GCM 256) sul foglio Google di chi lo crea; Google vede solo dati illeggibili.
+
+**Chi crea l’archivio (una volta):**
+1. Prepara il foglio come per il backup (Impostazioni › Backup su Google Sheet › guida) oppure usa quello che hai già.
+2. In Apps Script incolla il nuovo `Code.gs` e salva. Non serve rieseguire `setup`: le schede `GT_Shared` e `GT_SharedData` si creano da sole.
+3. **Esegui il deployment › Gestisci deployment** › matita › **Versione: Nuova versione** › *Esegui come: me* › *Chi può accedere: Chiunque* › **Esegui il deployment**. L’URL `/exec` non cambia.
+4. Nell’app: Impostazioni › **Famiglia condivisa**: URL, chiave, il tuo nome e una **password di famiglia** (almeno 12 caratteri) › **Collega**.
+5. **Condividi con la famiglia**: link o QR. Il link contiene solo URL e chiave dopo il `#` (non arriva a nessun server); **la password va data a parte**.
+
+**I parenti:** aprono il link, scrivono il proprio nome e la password, premono **Collega**.
+
+**Come si sincronizza:** all’apertura, pochi secondi dopo ogni modifica e con **Sincronizza ora**. Le modifiche si fondono persona per persona (ID stabile, esportato come `_UID`); se due persone cambiano lo stesso dato vince l’ultima e il caso compare in **Modifiche in conflitto**. Le eliminazioni restano come “lapidi”, così non ricompaiono. L’invio usa un numero di revisione: se qualcuno ha scritto nel frattempo, l’app riscarica, fonde e riprova. Offline si continua a lavorare: si sincronizza al ritorno della rete.
+
+I backup personali (`GT_Backups`) restano separati e compatibili.
 
 ## Pubblicare con GitHub Pages
 Settings › Pages › Source: *Deploy from a branch* › `main` / `(root)`. Dopo un minuto l’app è su `https://<utente>.github.io/stirp-radis/`.
