@@ -2,7 +2,9 @@
    Esegui setup una volta, poi distribuisci come App web:
    Esegui come te / Accesso Chiunque. Conserva URL /exec e chiave.
    Il foglio contiene SOLO backup cifrati, non nomi in chiaro.
-   Non modificare le righe a mano; ogni backup è una nuova versione. */
+   Non modificare le righe a mano; ogni backup è una nuova versione.
+   Versione 39: aggiunge l'archivio di famiglia condiviso (GT_Shared, GT_SharedData)
+   con numero di revisione; i backup esistenti (GT_Backups) restano invariati. */
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   if (!ss) throw new Error('Apri Apps Script dalle Estensioni del Google Sheet.');
@@ -11,6 +13,7 @@ function setup() {
   if (!token) token = (Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, '');
   props.setProperties({ GT_SHEET_ID: ss.getId(), GT_TOKEN: token });
   gtSheets_();
+  gtShared_();
   console.log('CHIAVE STIRP&RADIS: ' + token);
   console.log('Conserva questa chiave. Dopo la distribuzione usa URL /exec.');
 }
@@ -29,6 +32,76 @@ function gtSheets_() {
     chunks.setFrozenRows(1);
   }
   return { index: index, chunks: chunks };
+}
+function gtEnvelope_(payload) {
+  var env;
+  try { env = JSON.parse(payload); } catch (e) { env = {}; }
+  if (env.format !== 'gt-aes-gcm-v1' || env.iterations !== 210000 ||
+    !/^[A-Za-z0-9+/=]+$/.test(env.cipher || '') ||
+    !/^[A-Za-z0-9+/=]{24}$/.test(env.salt || '') ||
+    !/^[A-Za-z0-9+/=]{16}$/.test(env.iv || '')) throw new Error('Sono ammessi solo backup cifrati Stirp&Radis.');
+}
+/* Archivio di famiglia: GT_Shared = una riga per revisione [Rev, Data, SHA256, Parti, Op];
+   GT_SharedData = frammenti cifrati. Si conservano le ultime 20 revisioni. */
+function gtShared_() {
+  var id = PropertiesService.getScriptProperties().getProperty('GT_SHEET_ID');
+  if (!id) throw new Error('Esegui setup prima della distribuzione.');
+  var ss = SpreadsheetApp.openById(id);
+  var index = ss.getSheetByName('GT_Shared') || ss.insertSheet('GT_Shared');
+  var chunks = ss.getSheetByName('GT_SharedData') || ss.insertSheet('GT_SharedData');
+  if (!index.getLastRow()) { index.appendRow(['Rev', 'Data UTC', 'SHA256', 'Parti', 'Op']); index.setFrozenRows(1); }
+  if (!chunks.getLastRow()) { chunks.appendRow(['Op', 'Parte', 'Archivio cifrato']); chunks.setFrozenRows(1); }
+  return { index: index, chunks: chunks };
+}
+function gtSharedHead_(sheets) {
+  var n = sheets.index.getLastRow();
+  if (n < 2) return { rev: 0, at: '', sha: '', parts: 0, op: '' };
+  var r = sheets.index.getRange(n, 1, 1, 5).getValues()[0];
+  return { rev: Number(r[0]), at: String(r[1]), sha: String(r[2]), parts: Number(r[3]), op: String(r[4]) };
+}
+function gtSharedGet_(p) {
+  var sheets = gtShared_(), head = gtSharedHead_(sheets), out = { ok: true, rev: head.rev, at: head.at, sha: head.sha, op: head.op };
+  if (p.head === '1' || !head.rev) return out;
+  var n = sheets.chunks.getLastRow();
+  var rows = n > 1 ? sheets.chunks.getRange(2, 1, n - 1, 3).getValues() : [];
+  rows = rows.filter(function (r) { return String(r[0]) === head.op; }).sort(function (a, b) { return Number(a[1]) - Number(b[1]); });
+  if (rows.length !== head.parts) throw new Error('Parti dell’archivio mancanti.');
+  out.payload = rows.map(function (r) { var t = String(r[2]); if (t.slice(0, 4) !== 'GT1:') throw new Error('Formato frammento non valido.'); return t.slice(4); }).join('');
+  if (gtHash_(out.payload) !== head.sha) throw new Error('Archivio danneggiato.');
+  return out;
+}
+/* Concorrenza ottimistica: si scrive solo se baseRev è ancora l'ultima revisione. */
+function gtSharedPut_(p) {
+  if (!/^s_[A-Za-z0-9]{8,40}$/.test(p.op || '')) throw new Error('Operazione non valida.');
+  var payload = String(p.payload || ''), base = Number(p.baseRev);
+  if (payload.length > 2000000 || payload.length < 100) throw new Error('Dimensione non valida.');
+  if (!Number.isInteger(base) || base < 0) throw new Error('Revisione non valida.');
+  gtEnvelope_(payload);
+  var sha = gtHash_(payload);
+  if (sha !== p.sha) throw new Error('Impronta dell’archivio errata.');
+  var sheets = gtShared_(), head = gtSharedHead_(sheets);
+  if (head.op === p.op) return { ok: true, rev: head.rev, op: p.op, sha: head.sha };
+  if (base !== head.rev) return { ok: false, conflict: true, rev: head.rev, error: 'Archivio modificato da un altro familiare.' };
+  var parts = [];
+  for (var i = 0; i < payload.length; i += 40000) parts.push([p.op, parts.length, 'GT1:' + payload.slice(i, i + 40000)]);
+  var start = sheets.chunks.getLastRow() + 1, required = start + parts.length - 1;
+  if (sheets.chunks.getMaxRows() < required) sheets.chunks.insertRowsAfter(sheets.chunks.getMaxRows(), required - sheets.chunks.getMaxRows());
+  sheets.chunks.getRange(start, 1, parts.length, 3).setNumberFormat('@').setValues(parts);
+  SpreadsheetApp.flush();
+  var at = new Date().toISOString(), rev = head.rev + 1;
+  sheets.index.appendRow([rev, at, sha, parts.length, p.op]);
+  SpreadsheetApp.flush();
+  gtSharedPrune_(sheets, 20);
+  return { ok: true, rev: rev, at: at, op: p.op, sha: sha };
+}
+function gtSharedPrune_(sheets, keep) {
+  var n = sheets.index.getLastRow() - 1;
+  if (n <= keep) return;
+  var old = sheets.index.getRange(2, 5, n - keep, 1).getValues().map(function (r) { return String(r[0]); });
+  var m = sheets.chunks.getLastRow() - 1, ops = m > 0 ? sheets.chunks.getRange(2, 1, m, 1).getValues() : [], k = 0;
+  while (k < ops.length && old.indexOf(String(ops[k][0])) >= 0) k++;
+  if (k > 0) sheets.chunks.deleteRows(2, k);
+  sheets.index.deleteRows(2, n - keep);
 }
 function gtAuth_(p) {
   var token = PropertiesService.getScriptProperties().getProperty('GT_TOKEN');
@@ -56,6 +129,7 @@ function doGet(e) {
   var p = e && e.parameter || {};
   try {
     gtAuth_(p);
+    if (p.action === 'shared') return gtReply_(gtSharedGet_(p), p.callback);
     var sheets = gtSheets_(), rows = gtRows_(sheets.index);
     if (p.action === 'list') {
       return gtReply_({ ok: true, backups: rows.slice(-100).reverse().map(gtEntry_) }, p.callback);
@@ -84,16 +158,13 @@ function doPost(e) {
   var p = e && e.parameter || {}, lock = LockService.getScriptLock(), held = false;
   try {
     gtAuth_(p);
+    if (p.action === 'sharedPut') { lock.waitLock(20000); held = true; return gtReply_(gtSharedPut_(p)); }
     if (p.action !== 'save') throw new Error('Operazione non valida.');
     if (!/^b_[A-Za-z0-9]+$/.test(p.id || '')) throw new Error('ID non valido.');
     var payload = String(p.payload || ''), count = Number(p.count);
     if (payload.length > 2000000 || payload.length < 100) throw new Error('Dimensione non valida.');
     if (!Number.isInteger(count) || count < 0 || count > 10000) throw new Error('Conteggio non valido.');
-    var env = JSON.parse(payload);
-    if (env.format !== 'gt-aes-gcm-v1' || env.iterations !== 210000 ||
-      !/^[A-Za-z0-9+/=]+$/.test(env.cipher || '') ||
-      !/^[A-Za-z0-9+/=]{24}$/.test(env.salt || '') ||
-      !/^[A-Za-z0-9+/=]{16}$/.test(env.iv || '')) throw new Error('Sono ammessi solo backup cifrati Stirp&Radis.');
+    gtEnvelope_(payload);
     var sha = gtHash_(payload);
     if (sha !== p.sha) throw new Error('Impronta del backup errata.');
     lock.waitLock(20000); held = true;
