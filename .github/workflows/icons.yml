@@ -1,0 +1,23 @@
+name: Icone PNG da base64
+# push_files accetta solo testo: le icone arrivano come icons/src/*.png.b64 e qui diventano PNG veri.
+on:
+  push:
+    paths: ['icons/src/*.b64']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  decode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decodifica
+        run: |
+          for f in icons/src/*.png.b64; do base64 -d "$f" > "icons/$(basename "$f" .b64)"; done
+          ls -la icons
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add icons/*.png
+          git diff --cached --quiet || (git commit -m "Icone PNG generate da icons/src (base64)" && git push)
