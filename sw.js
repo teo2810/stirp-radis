@@ -1,7 +1,7 @@
 // Stirp&Radis service worker: rende l'app disponibile offline quando è pubblicata su https.
 // I dati restano nel browser (localStorage): il service worker salva solo i file dell'app.
-const CACHE='stirpradis-v46-1';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./icons/icon.svg','./icons/icon-maskable.svg'];
+const CACHE='stirpradis-v47-1';
+const ASSETS=['./','./index.html','./manifest.webmanifest','./icons/icon.svg','./icons/icon-maskable.svg','./icons/icon-48.png','./icons/icon-128.png','./icons/icon-192.png','./icons/icon-256.png','./icons/icon-512.png','./icons/icon-maskable-192.png','./icons/icon-maskable-512.png','./icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).catch(()=>{}).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('stirpradis-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{
