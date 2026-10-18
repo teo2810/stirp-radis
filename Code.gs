@@ -1,8 +1,10 @@
 /* Stirp&Radis — incolla in Code.gs del tuo Google Sheet privato.
    Esegui setup una volta, poi distribuisci come App web:
    Esegui come te / Accesso Chiunque. Conserva URL /exec e chiave.
-   Il foglio contiene SOLO backup cifrati, non nomi in chiaro.
+   Backup e archivio di famiglia sono cifrati. Solo se lo attivi nell'app, le schede
+   'Persone' e 'Unioni' contengono una copia leggibile (sola scrittura, mai restituita).
    Non modificare le righe a mano; ogni backup è una nuova versione.
+   Versione 46: foglio leggibile ('Persone', 'Unioni') scritto dal dispositivo del proprietario.
    Versione 39: aggiunge l'archivio di famiglia condiviso (GT_Shared, GT_SharedData)
    con numero di revisione; i backup esistenti (GT_Backups) restano invariati. */
 function setup() {
@@ -103,6 +105,34 @@ function gtSharedPrune_(sheets, keep) {
   if (k > 0) sheets.chunks.deleteRows(2, k);
   sheets.index.deleteRows(2, n - keep);
 }
+/* Foglio leggibile: sovrascrive le schede 'Persone' e 'Unioni'. Sola scrittura: risponde solo con il numero di righe. */
+var GT_READABLE = { Persone: ['ID', 'Nome', 'Cognome', 'Sesso', 'Nascita (data)', 'Nascita (luogo)', 'Morte (data)', 'Morte (luogo)', 'Padre', 'Madre', 'Partner', 'Note brevi'],
+  Unioni: ['Partner 1', 'Partner 2', 'Tipo', 'Data', 'Luogo', 'Fine'] };
+function gtCell_(v) {
+  var t = String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, ' ').slice(0, 500);
+  return /^[=+\-@]/.test(t) ? "'" + t : t;
+}
+function gtReadable_(p) {
+  var raw = String(p.table || '');
+  if (raw.length > 2000000) throw new Error('Tabella troppo grande.');
+  var data; try { data = JSON.parse(raw); } catch (e) { throw new Error('Tabella non valida.'); }
+  var id = PropertiesService.getScriptProperties().getProperty('GT_SHEET_ID');
+  if (!id) throw new Error('Esegui setup prima della distribuzione.');
+  var ss = SpreadsheetApp.openById(id), counts = {};
+  Object.keys(GT_READABLE).forEach(function (name) {
+    var head = GT_READABLE[name], rows = Array.isArray(data[name]) ? data[name].slice(0, 10000) : [];
+    rows = rows.filter(Array.isArray).map(function (r) { var out = []; for (var j = 0; j < head.length; j++) out.push(gtCell_(r[j])); return out; });
+    var sh = ss.getSheetByName(name) || ss.insertSheet(name);
+    sh.clear();
+    sh.getRange(1, 1, 1, 1).setValues([['Sola lettura: le modifiche qui non tornano nell\'app. Aggiornato ' + new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC']]);
+    sh.getRange(2, 1, 1, head.length).setValues([head]).setFontWeight('bold').setBackground('#e8f0ea');
+    if (rows.length) sh.getRange(3, 1, rows.length, head.length).setNumberFormat('@').setValues(rows);
+    sh.setFrozenRows(2);
+    sh.autoResizeColumns(1, head.length);
+    counts[name] = rows.length;
+  });
+  return { ok: true, persone: counts.Persone, unioni: counts.Unioni };
+}
 function gtAuth_(p) {
   var token = PropertiesService.getScriptProperties().getProperty('GT_TOKEN');
   if (!token || !p.token || p.token !== token) throw new Error('Chiave di accesso errata.');
@@ -129,6 +159,7 @@ function doGet(e) {
   var p = e && e.parameter || {};
   try {
     gtAuth_(p);
+    if (p.action === 'caps') return gtReply_({ ok: true, caps: ['shared', 'readable'] }, p.callback);
     if (p.action === 'shared') return gtReply_(gtSharedGet_(p), p.callback);
     var sheets = gtSheets_(), rows = gtRows_(sheets.index);
     if (p.action === 'list') {
@@ -159,6 +190,7 @@ function doPost(e) {
   try {
     gtAuth_(p);
     if (p.action === 'sharedPut') { lock.waitLock(20000); held = true; return gtReply_(gtSharedPut_(p)); }
+    if (p.action === 'readable') { lock.waitLock(20000); held = true; return gtReply_(gtReadable_(p)); }
     if (p.action !== 'save') throw new Error('Operazione non valida.');
     if (!/^b_[A-Za-z0-9]+$/.test(p.id || '')) throw new Error('ID non valido.');
     var payload = String(p.payload || ''), count = Number(p.count);
