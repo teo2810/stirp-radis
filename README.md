@@ -28,6 +28,7 @@ Albero · Persone (Elenco · Duplicati · Cognomi · Unioni) · ＋ Nuova · Imp
 - **v64.4:** gli avvisi brevi restano visibili meno a lungo (da 2,5 a 6,5 secondi secondo la lunghezza), così coprono meno la barra e gli elenchi.
 - **v64.5:** nella scheda persona i parenti mostrano date ed età senza aprirli (es. «Padre · 1890–1956 · 66 anni», «n. 29/03/1954 · 72 anni»); ogni unione è legata al partner in una riga sola («Matrimonio · 26/09/1987 · luogo»); «Dati tecnici» è più discreto.
 - **v64.6:** nelle righe dei parenti la data di nascita compare senza «n.»; se le date non sono complete l’età è la semplice differenza degli anni con «~» (es. «1888–1947 · ~59 anni»). Le età esatte e quelle indicate nel GEDCOM restano invariate, come l’età nella scheda.
+- **v64.7:** anche il pannello della persona selezionata usa la stessa riga breve (anni senza «n.», «~N anni» se le date non sono complete).
 
 ## Colori
 Un solo verde (#338259) e una sola sabbia (#a87b3e) in entrambi i temi. Nell’albero e nella ruota i rami hanno gli stessi colori: azzurro e verde per il lato paterno, sabbia e rosa per quello materno, rispetto alla “Persona al centro”.
