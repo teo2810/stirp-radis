@@ -22,7 +22,7 @@ Albero · Persone (Elenco · Duplicati · Cognomi · Unioni) · ＋ Nuova · Imp
 - Backup JSON, ripristino, “Elimina tutte le persone” con tre conferme e copia automatica.
 - **Alberi grandi**: pulsante *Vista* sull’albero — *Attorno a una persona* (antenati/discendenti regolabili, “+” per espandere), ramo *Paterno/Materno*, filtro per *Cognome*; la freccia sotto una scheda comprime il ramo in una sola scheda “Cognome · N persone”. Le scelte restano salvate.
 - **Famiglia condivisa**: un archivio cifrato comune sul Google Drive di chi lo crea, compilato insieme ai parenti (vedi sotto).
-- Backup facoltativo **cifrato** su un tuo Google Sheet (AES‑GCM 256, password mai inviata). Il codice Apps Script è in `Code.gs` e dentro l’app (Impostazioni › Dati › *Backup personale su Google*).
+- Backup facoltativo **cifrato** su un tuo Google Sheet (AES‑GCM 256, password mai inviata). Il codice Apps Script è in `Code.gs` e dentro l’app (Impostazioni › Dati › *Backup personale su Google*). Dalla v64 il foglio leggibile ha anche la colonna **Età** (calcolata dalle date): per averla incolla il nuovo `Code.gs` e pubblica una *Nuova versione* del deployment; senza aggiornare tutto continua a funzionare, la colonna semplicemente non compare.
 
 ## Colori
 Un solo verde (#338259) e una sola sabbia (#a87b3e) in entrambi i temi. Nell’albero e nella ruota i rami hanno gli stessi colori: azzurro e verde per il lato paterno, sabbia e rosa per quello materno, rispetto alla “Persona al centro”.
