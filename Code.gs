@@ -4,6 +4,7 @@
    Backup e archivio di famiglia sono cifrati. Solo se lo attivi nell'app, le schede
    'Persone' e 'Unioni' contengono una copia leggibile (sola scrittura, mai restituita).
    Non modificare le righe a mano; ogni backup è una nuova versione.
+   Versione 64: colonna 'Età' nel foglio leggibile (calcolata dalle date, solo da leggere).
    Versione 46: foglio leggibile ('Persone', 'Unioni') scritto dal dispositivo del proprietario.
    Versione 39: aggiunge l'archivio di famiglia condiviso (GT_Shared, GT_SharedData)
    con numero di revisione; i backup esistenti (GT_Backups) restano invariati. */
@@ -106,7 +107,7 @@ function gtSharedPrune_(sheets, keep) {
   sheets.index.deleteRows(2, n - keep);
 }
 /* Foglio leggibile: sovrascrive le schede 'Persone' e 'Unioni'. Sola scrittura: risponde solo con il numero di righe. */
-var GT_READABLE = { Persone: ['ID', 'Nome', 'Cognome', 'Sesso', 'Nascita (data)', 'Nascita (luogo)', 'Morte (data)', 'Morte (luogo)', 'Padre', 'Madre', 'Partner', 'Note brevi'],
+var GT_READABLE = { Persone: ['ID', 'Nome', 'Cognome', 'Sesso', 'Nascita (data)', 'Nascita (luogo)', 'Morte (data)', 'Morte (luogo)', 'Padre', 'Madre', 'Partner', 'Note brevi', 'Età'],
   Unioni: ['Partner 1', 'Partner 2', 'Tipo', 'Data', 'Luogo', 'Fine'] };
 function gtCell_(v) {
   var t = String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, ' ').slice(0, 500);
