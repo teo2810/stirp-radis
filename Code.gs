@@ -4,6 +4,8 @@
    Backup e archivio di famiglia sono cifrati. Solo se lo attivi nell'app, le schede
    'Persone' e 'Unioni' contengono una copia leggibile (sola scrittura, mai restituita).
    Non modificare le righe a mano; ogni backup è una nuova versione.
+   Versione 64.2: archivio di famiglia più robusto (ripiego sull'ultima revisione leggibile, pulizia dei frammenti orfani,
+   ora del server nelle risposte, meno chiamate); backup personali: si conservano gli ultimi 30.
    Versione 64: colonna 'Età' nel foglio leggibile (calcolata dalle date, solo da leggere).
    Versione 46: foglio leggibile ('Persone', 'Unioni') scritto dal dispositivo del proprietario.
    Versione 39: aggiunge l'archivio di famiglia condiviso (GT_Shared, GT_SharedData)
@@ -62,16 +64,49 @@ function gtSharedHead_(sheets) {
   var r = sheets.index.getRange(n, 1, 1, 5).getValues()[0];
   return { rev: Number(r[0]), at: String(r[1]), sha: String(r[2]), parts: Number(r[3]), op: String(r[4]) };
 }
+var GT_API = 2;
 function gtSharedGet_(p) {
-  var sheets = gtShared_(), head = gtSharedHead_(sheets), out = { ok: true, rev: head.rev, at: head.at, sha: head.sha, op: head.op };
+  var sheets = gtShared_(), head = gtSharedHead_(sheets), out = { ok: true, rev: head.rev, at: head.at, sha: head.sha, op: head.op, api: GT_API, now: new Date().toISOString() };
   if (p.head === '1' || !head.rev) return out;
-  var n = sheets.chunks.getLastRow();
+  var known = !!(p.known && p.known === head.sha && !p.rev);
+  if (known && gtHeadReadable_(sheets, head)) { out.same = true; return out; }
+  var n = sheets.chunks.getLastRow(), m = sheets.index.getLastRow();
   var rows = n > 1 ? sheets.chunks.getRange(2, 1, n - 1, 3).getValues() : [];
-  rows = rows.filter(function (r) { return String(r[0]) === head.op; }).sort(function (a, b) { return Number(a[1]) - Number(b[1]); });
-  if (rows.length !== head.parts) throw new Error('Parti dell’archivio mancanti.');
-  out.payload = rows.map(function (r) { var t = String(r[2]); if (t.slice(0, 4) !== 'GT1:') throw new Error('Formato frammento non valido.'); return t.slice(4); }).join('');
-  if (gtHash_(out.payload) !== head.sha) throw new Error('Archivio danneggiato.');
-  return out;
+  var revs = m > 1 ? sheets.index.getRange(2, 1, m - 1, 5).getValues() : [];
+  var want = p.rev ? Number(p.rev) : 0, err = '';
+  for (var i = revs.length - 1; i >= 0; i--) {
+    var r = revs[i], rev = Number(r[0]), sha = String(r[2]), parts = Number(r[3]), op = String(r[4]);
+    if (want && rev !== want) continue;
+    var mine = rows.filter(function (x) { return String(x[0]) === op; }).sort(function (a, b) { return Number(a[1]) - Number(b[1]); });
+    var ok = mine.length === parts && mine.every(function (x) { return String(x[2]).slice(0, 4) === 'GT1:'; });
+    var payload = ok ? mine.map(function (x) { return String(x[2]).slice(4); }).join('') : '';
+    if (ok && gtHash_(payload) === sha) {
+      out.payload = payload;
+      if (rev !== head.rev) { out.fallback = rev; out.fallbackSha = sha; out.damaged = err; }
+      return out;
+    }
+    err = err || (mine.length !== parts ? 'Parti dell’archivio mancanti.' : 'Archivio danneggiato.');
+    if (want) break;
+  }
+  if (known) { out.damaged = err || 'Archivio danneggiato.'; return out; }
+  throw new Error(err || 'Revisione non disponibile.');
+}
+/* Verifica economica dell'ultima revisione: legge solo la colonna delle operazioni e le righe di quella revisione. */
+function gtHeadReadable_(sheets, head) {
+  var m = sheets.index.getLastRow(), n = sheets.chunks.getLastRow();
+  if (m < 2 || n < 2) return false;
+  var last = sheets.index.getRange(m, 1, 1, 5).getValues()[0], parts = Number(last[3]), op = String(last[4]);
+  var ops = sheets.chunks.getRange(2, 1, n - 1, 2).getValues(), mine = [];
+  for (var i = 0; i < ops.length; i++) if (String(ops[i][0]) === op) mine.push([Number(ops[i][1]), i + 2]);
+  if (mine.length !== parts) return false;
+  mine.sort(function (x, y) { return x[0] - y[0]; });
+  var payload = '';
+  for (var k = 0; k < mine.length; k++) {
+    var v = String(sheets.chunks.getRange(mine[k][1], 3, 1, 1).getValues()[0][0]);
+    if (v.slice(0, 4) !== 'GT1:') return false;
+    payload += v.slice(4);
+  }
+  return gtHash_(payload) === head.sha;
 }
 /* Concorrenza ottimistica: si scrive solo se baseRev è ancora l'ultima revisione. */
 function gtSharedPut_(p) {
@@ -101,10 +136,21 @@ function gtSharedPrune_(sheets, keep) {
   var n = sheets.index.getLastRow() - 1;
   if (n <= keep) return;
   var old = sheets.index.getRange(2, 5, n - keep, 1).getValues().map(function (r) { return String(r[0]); });
-  var m = sheets.chunks.getLastRow() - 1, ops = m > 0 ? sheets.chunks.getRange(2, 1, m, 1).getValues() : [], k = 0;
-  while (k < ops.length && old.indexOf(String(ops[k][0])) >= 0) k++;
-  if (k > 0) sheets.chunks.deleteRows(2, k);
   sheets.index.deleteRows(2, n - keep);
+  var live = sheets.index.getRange(2, 5, keep, 1).getValues().map(function (r) { return String(r[0]); });
+  gtDropRows_(sheets.chunks, function (op) { return live.indexOf(op) < 0; });
+}
+/* Elimina (dal basso, a blocchi contigui) le righe dei frammenti la cui chiave soddisfa drop. Da chiamare con il lock. */
+function gtDropRows_(sheet, drop) {
+  var m = sheet.getLastRow() - 1;
+  if (m < 1) return 0;
+  var keys = sheet.getRange(2, 1, m, 1).getValues(), end = -1, removed = 0;
+  for (var i = keys.length - 1; i >= -1; i--) {
+    var d = i >= 0 && drop(String(keys[i][0]));
+    if (d && end < 0) end = i;
+    if (!d && end >= 0) { sheet.deleteRows(i + 3, end - i); removed += end - i; end = -1; }
+  }
+  return removed;
 }
 /* Foglio leggibile: sovrascrive le schede 'Persone' e 'Unioni'. Sola scrittura: risponde solo con il numero di righe. */
 var GT_READABLE = { Persone: ['ID', 'Nome', 'Cognome', 'Sesso', 'Nascita (data)', 'Nascita (luogo)', 'Morte (data)', 'Morte (luogo)', 'Padre', 'Madre', 'Partner', 'Note brevi', 'Età'],
@@ -134,6 +180,14 @@ function gtReadable_(p) {
   });
   return { ok: true, persone: counts.Persone, unioni: counts.Unioni };
 }
+/* Backup personali: restano gli ultimi GT_KEEP_BACKUPS; i frammenti senza backup (vecchi o orfani) si eliminano. */
+var GT_KEEP_BACKUPS = 30;
+function gtBackupsPrune_(sheets, keep) {
+  var n = sheets.index.getLastRow() - 1;
+  if (n > keep) sheets.index.deleteRows(2, n - keep);
+  var ids = gtRows_(sheets.index).map(function (r) { return String(r[0]); });
+  gtDropRows_(sheets.chunks, function (id) { return ids.indexOf(id) < 0; });
+}
 function gtAuth_(p) {
   var token = PropertiesService.getScriptProperties().getProperty('GT_TOKEN');
   if (!token || !p.token || p.token !== token) throw new Error('Chiave di accesso errata.');
@@ -160,7 +214,7 @@ function doGet(e) {
   var p = e && e.parameter || {};
   try {
     gtAuth_(p);
-    if (p.action === 'caps') return gtReply_({ ok: true, caps: ['shared', 'readable'] }, p.callback);
+    if (p.action === 'caps') return gtReply_({ ok: true, caps: ['shared', 'readable', 'sharedKnown', 'sharedRev', 'now'], api: GT_API }, p.callback);
     if (p.action === 'shared') return gtReply_(gtSharedGet_(p), p.callback);
     var sheets = gtSheets_(), rows = gtRows_(sheets.index);
     if (p.action === 'list') {
@@ -222,6 +276,7 @@ function doPost(e) {
     var at = new Date().toISOString();
     sheets.index.appendRow([p.id, at, count, sha, parts.length]);
     SpreadsheetApp.flush();
+    gtBackupsPrune_(sheets, GT_KEEP_BACKUPS);
     return gtReply_({ ok: true, id: p.id, at: at, sha: sha });
   } catch (err) { return gtReply_({ ok: false, error: err.message }); }
   finally { if (held) lock.releaseLock(); }
