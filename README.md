@@ -29,6 +29,7 @@ Albero · Persone (Elenco · Duplicati · Cognomi · Unioni) · ＋ Nuova · Imp
 - **v64.5:** nella scheda persona i parenti mostrano date ed età senza aprirli (es. «Padre · 1890–1956 · 66 anni», «n. 29/03/1954 · 72 anni»); ogni unione è legata al partner in una riga sola («Matrimonio · 26/09/1987 · luogo»); «Dati tecnici» è più discreto.
 - **v64.6:** nelle righe dei parenti la data di nascita compare senza «n.»; se le date non sono complete l’età è la semplice differenza degli anni con «~» (es. «1888–1947 · ~59 anni»). Le età esatte e quelle indicate nel GEDCOM restano invariate, come l’età nella scheda.
 - **v64.7:** anche il pannello della persona selezionata usa la stessa riga breve (anni senza «n.», «~N anni» se le date non sono complete).
+- **v64.8:** stessa regola ovunque: età non esatta come «~N anni» (semplice differenza degli anni) in Informazioni (senza «(dalle date)»), schede dell’lbero, elenco Persone, ruota, stampa, foglio leggibile e statistiche; date approssimative con «~» invece di «≈». Età da date intere ed età indicata nel GEDCOM invariate. Code.gs non cambia: la colonna Età del foglio leggibile è calcolata dall’pp.
 
 ## Colori
 Un solo verde (#338259) e una sola sabbia (#a87b3e) in entrambi i temi. Nell’albero e nella ruota i rami hanno gli stessi colori: azzurro e verde per il lato paterno, sabbia e rosa per quello materno, rispetto alla “Persona al centro”.
