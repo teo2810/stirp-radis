@@ -43,6 +43,7 @@ Albero · Persone (Elenco · Duplicati · Cognomi · Unioni) · ＋ Nuova · Imp
 - **v67.0:** pulizia interna, nessun cambiamento visibile: un solo normalizzatore dei nomi per ricerca, inserimento rapido, Elenco, duplicati e storia del cognome (stessi risultati); test e strumenti di sviluppo riordinati.
 - **v67.1:** pulizia interna, nessun cambiamento visibile: tolti quattro segnaposto nascosti e una funzione vuota rimasti dalle versioni precedenti.
 - **v67.2:** pulizia interna, nessun cambiamento visibile: fogli di stile riordinati per componente, tolte le regole e le dichiarazioni che non avevano più effetto.
+- **v67.3:** pulizia interna, nessun cambiamento visibile: indice e titoli dei moduli nel codice JavaScript, nessuna riga di codice spostata o cambiata.
 
 ## Colori
 Un solo verde (#338259) e una sola sabbia (#a87b3e) in entrambi i temi. Nell’albero e nella ruota i rami hanno gli stessi colori: azzurro e verde per il lato paterno, sabbia e rosa per quello materno, rispetto alla “Persona al centro”.
