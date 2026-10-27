@@ -13,7 +13,7 @@ Albero genealogico in **un solo file HTML**. Niente server e niente account: i d
 Ogni browser e ogni dispositivo ha i suoi dati. Per spostarli usa Impostazioni › *Importa / esporta file* (copia JSON) oppure il tuo archivio Google.
 
 ## Primo avvio
-Con l’albero vuoto compare il benvenuto: **Entra nell’albero di famiglia** (link d’invito o QR), **Importa un file** (GEDCOM da MyHeritage, Ancestry… o una copia JSON), **Inizia da zero**. Lo ritrovi in Impostazioni › *Impostazioni avanzate* › App › *Schermata di benvenuto*.
+Con l’albero vuoto compare il benvenuto: **Entra nell’albero di famiglia** (link d’invito o QR), **Importa un file** (GEDCOM da MyHeritage, Ancestry… o una copia JSON), **Inizia da zero**, **Prova con l’esempio** (33 persone inventate: una fascia in alto dice «Stai guardando l’esempio» e **Esci** riporta esattamente il tuo albero; le modifiche all’esempio restano a parte). Lo ritrovi in Impostazioni › *Impostazioni avanzate* › App › *Schermata di benvenuto*.
 
 ## Il tuo archivio Google (facoltativo)
 Serve per due cose: copie di sicurezza **cifrate** e l’**albero di famiglia condiviso**. Lo prepara una sola persona per famiglia, una volta; i parenti invitati non devono fare nulla di tutto questo. Il foglio resta privato e Google vede solo dati cifrati.
