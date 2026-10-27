@@ -42,6 +42,7 @@ Albero · Persone (Elenco · Duplicati · Cognomi · Unioni) · ＋ Nuova · Imp
 - **v66.3:** barra della vita più leggibile: l’età sta sopra la fine della barra (sul punto per i deceduti, su «oggi» per chi è in vita), centrata ma sempre dentro la scheda; sotto solo gli anni («1932» e «2011» o «oggi»), uniti in «1932–2011» quando la barra è troppo corta. Età sconosciuta → nessuna etichetta. Da lontano resta solo il numero dell’età sopra la fine. Legenda aggiornata.
 - **v67.0:** pulizia interna, nessun cambiamento visibile: un solo normalizzatore dei nomi per ricerca, inserimento rapido, Elenco, duplicati e storia del cognome (stessi risultati); test e strumenti di sviluppo riordinati.
 - **v67.1:** pulizia interna, nessun cambiamento visibile: tolti quattro segnaposto nascosti e una funzione vuota rimasti dalle versioni precedenti.
+- **v67.2:** pulizia interna, nessun cambiamento visibile: fogli di stile riordinati per componente, tolte le regole e le dichiarazioni che non avevano più effetto.
 
 ## Colori
 Un solo verde (#338259) e una sola sabbia (#a87b3e) in entrambi i temi. Nell’albero e nella ruota i rami hanno gli stessi colori: azzurro e verde per il lato paterno, sabbia e rosa per quello materno, rispetto alla “Persona al centro”.
