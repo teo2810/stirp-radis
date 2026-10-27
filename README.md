@@ -45,6 +45,7 @@ Albero · Persone (Elenco · Duplicati · Cognomi · Unioni) · ＋ Nuova · Imp
 - **v67.2:** pulizia interna, nessun cambiamento visibile: fogli di stile riordinati per componente, tolte le regole e le dichiarazioni che non avevano più effetto.
 - **v67.3:** pulizia interna, nessun cambiamento visibile: indice e titoli dei moduli nel codice JavaScript, nessuna riga di codice spostata o cambiata.
 - **v67.4:** pulizia interna, nessun cambiamento visibile: tolte 36 regole di stile per classi che non esistono più, una variabile mai letta e un'assegnazione subito sovrascritta.
+- **v67.5:** Link di invito e installazione: usano l'indirizzo da cui è aperta l'app; aprendola dal disco si può scegliere l'indirizzo in Impostazioni avanzate › App. Segnaposto del nome: «Il tuo nome».
 
 ## Colori
 Un solo verde (#338259) e una sola sabbia (#a87b3e) in entrambi i temi. Nell’albero e nella ruota i rami hanno gli stessi colori: azzurro e verde per il lato paterno, sabbia e rosa per quello materno, rispetto alla “Persona al centro”.
