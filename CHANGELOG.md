@@ -37,3 +37,4 @@ Una riga per versione, dalla più vecchia alla più recente. Come usare l’app:
 - **v68.4:** Linea del tempo: legge anche le date solo-anno/approssimative (come la barra della vita); a oggi tutti i morti sbiaditi in modo coerente, anche senza anno di morte.
 - **v68.5:** Linea del tempo: goccia con l'anno che esce dal pollice mentre si trascina, segue il dito, si inclina con la velocità e rientra al rilascio; tastiera e ridotto movimento.
 - **v68.6:** Android: bordi senza stacco — theme-color segue lo sfondo, manifest scuro, velature sfumate con blur in alto e in basso
+- **v68.7:** Android: tolte le velature sfocate; sfondo dell'albero piatto su telefono, i bordi combaciano con le barre di sistema in entrambi i temi
