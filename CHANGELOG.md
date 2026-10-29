@@ -36,3 +36,4 @@ Una riga per versione, dalla più vecchia alla più recente. Come usare l’app:
 - **v68.3:** Linea del tempo: nel menu Vista, barra in basso con anno; chi non è ancora nato o è già morto si attenua, gli altri mostrano l’età in quell’anno
 - **v68.4:** Linea del tempo: legge anche le date solo-anno/approssimative (come la barra della vita); a oggi tutti i morti sbiaditi in modo coerente, anche senza anno di morte.
 - **v68.5:** Linea del tempo: goccia con l'anno che esce dal pollice mentre si trascina, segue il dito, si inclina con la velocità e rientra al rilascio; tastiera e ridotto movimento.
+- **v68.6:** Android: bordi senza stacco — theme-color segue lo sfondo, manifest scuro, velature sfumate con blur in alto e in basso
