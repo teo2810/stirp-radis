@@ -34,3 +34,4 @@ Una riga per versione, dalla più vecchia alla più recente. Come usare l’app:
 - **v68.1:** Volo: quando una persona riceve il fuoco l'albero ci arriva con un'animazione morbida (pan+zoom ~400 ms) a una scala comoda; si interrompe toccando o con la rotella; istantaneo con movimento ridotto.
 - **v68.2:** Che parente è?: pulsante nella scheda selezione, tocca una seconda persona e appare la parentela in italiano col percorso evidenziato
 - **v68.3:** Linea del tempo: nel menu Vista, barra in basso con anno; chi non è ancora nato o è già morto si attenua, gli altri mostrano l’età in quell’anno
+- **v68.4:** Linea del tempo: legge anche le date solo-anno/approssimative (come la barra della vita); a oggi tutti i morti sbiaditi in modo coerente, anche senza anno di morte.
