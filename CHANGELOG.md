@@ -38,3 +38,4 @@ Una riga per versione, dalla più vecchia alla più recente. Come usare l’app:
 - **v68.5:** Linea del tempo: goccia con l'anno che esce dal pollice mentre si trascina, segue il dito, si inclina con la velocità e rientra al rilascio; tastiera e ridotto movimento.
 - **v68.6:** Android: bordi senza stacco — theme-color segue lo sfondo, manifest scuro, velature sfumate con blur in alto e in basso
 - **v68.7:** Android: tolte le velature sfocate; sfondo dell'albero piatto su telefono, i bordi combaciano con le barre di sistema in entrambi i temi
+- **v68.8:** Focus sulla selezione: le altre schede si attenuano; onda di luce sui collegamenti per generazione (Famiglia/Antenati/Discendenti); niente blur (perf)
